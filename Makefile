@@ -28,9 +28,12 @@ $(IMG): $(OUTPUT) | $(BUILD_DIR)
 	dd if=/dev/zero of=$@ bs=512 count=$(FLOPPY_SECTORS)
 	dd if=$(OUTPUT) of=$@ conv=notrunc
 
-# Run IfnOS in QEMU
+# Run IfnOS in QEMU (safe and proper command)
 run: $(IMG)
-	$(QEMU) -fda $(IMG)
+	$(QEMU) \
+		-drive file=$(IMG),format=raw,if=floppy \
+		-boot a \
+		-serial stdio
 
 # Ensure output directories exist
 $(BIN_DIR):

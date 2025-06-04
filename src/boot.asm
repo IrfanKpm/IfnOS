@@ -63,8 +63,9 @@ read_try: ; ───── Disk Read Try ─────
     mov cl, 2           ; Sector 2 (CHS: sector starts at 1)
     mov dh, 0           ; Head 0
     mov dl, [ebr_drive_number]  ; Drive (0x00 for floppy)
+    mov ax, 0x0500
     mov bx, 0x0000
-    mov es, 0x0500      ; Store data at ES:BX = 0x0500:0000
+    mov es, ax    ; Store data at ES:BX = 0x0500:0000
     int 0x13            ; BIOS interrupt to read disk
     
     jc read_fail
