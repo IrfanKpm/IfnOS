@@ -42,11 +42,17 @@ main:
     mov si, msg
     call _print
     
+
     ; Disk Reset before Read — good practice
     call disk_reset
 
+    cld
+    mov si,msg_disk_reset
+    call _print
+
     ; Attempt to read 1 sector from disk (sector 2)
     call disk_read
+
     
     jmp $
 
@@ -63,9 +69,9 @@ read_try: ; ───── Disk Read Try ─────
     mov cl, 2           ; Sector 2 (CHS: sector starts at 1)
     mov dh, 0           ; Head 0
     mov dl, [ebr_drive_number]  ; Drive (0x00 for floppy)
-    mov ax, 0x0500
-    mov bx, 0x0000
-    mov es, ax    ; Store data at ES:BX = 0x0500:0000
+    mov ax, 0x0000
+    mov es, ax    
+    mov bx, 0x7E00    ; Just above bootloader + stack
     int 0x13            ; BIOS interrupt to read disk
     
     jc read_fail
@@ -114,10 +120,10 @@ _here:
     jmp _here
 
 ; ───── Messages ─────
-msg:          db "IfnOS - an eXperimental OS", 0xA, 0
-msg_success:  db "Disk read success!", 0xA, 0
-msg_error:    db "Disk read failed!", 0xA, 0
-
+msg:            db "IfnOS - an eXperimental OS",0x0D,0xA, 0
+msg_success:    db "Disk read success",0x0D,0xA, 0
+msg_error:      db "Disk read failed", 0x0D,0xA, 0
+msg_disk_reset: db "Disk Reseted",0x0D,0x0A,0
 ; ───── Boot Signature ─────
 times 510 - ($ - $$) db 0
 dw 0xAA55
