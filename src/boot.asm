@@ -34,7 +34,7 @@ main:
     mov ds, ax
     mov es, ax
     mov ss, ax
-    mov sp, 0x7E00     ; Set stack pointer 0x7C00 + 512 = 0x7E00
+    mov sp, 0x8400 ; Stack pointer = bootloader(1 sector) + gap(3 sectors) = 0x7C00 + 512 + 1536 = 0x8400
     sti
 
     ; Print welcome message
@@ -71,7 +71,7 @@ read_try: ; ───── Disk Read Try ─────
     mov dl, [ebr_drive_number]  ; Drive (0x00 for floppy)
     mov ax, 0x0000
     mov es, ax    
-    mov bx, 0x7E00    ; Just above bootloader + stack
+    mov bx, 0x8400    ; Just above bootloader + stack
     int 0x13            ; BIOS interrupt to read disk
     
     jc read_fail
